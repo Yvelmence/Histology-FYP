@@ -1,6 +1,6 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
-const MONGO_URI = "mongodb+srv://yvelmencedanub:TTvRwpvktH1dXhHd@fyp.stpzo.mongodb.net/Node-API?retryWrites=true&w=majority&appName=FYP";
+const MONGO_URI = "mongodb+srv://yvelmencedanub:TTvRwpvktH1dXhHd@fyp.stpzo.mongodb.net/";
 
 const connectDB = async () => {
   try {
@@ -11,8 +11,8 @@ const connectDB = async () => {
     console.log('MongoDB connected successfully');
   } catch (err) {
     console.error('MongoDB connection error:', err.message);
-    process.exit(1); // Exit the process on failure
+    process.exit(1);
   }
 };
 
-module.exports = connectDB;
+export default connectDB;

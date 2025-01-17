@@ -1,14 +1,26 @@
-const express = require('express');
-const tf = require('@tensorflow/tfjs-node');
-const multer = require('multer');
-const cors = require('cors');
-const path = require('path');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const connectDB = require('./db');
-const Question = require('./quiz_questions_db');
-const User = require('./user_model');
-const mongoose = require('mongoose');
+import dotenv from 'dotenv';
+import express from 'express';
+import * as tf from '@tensorflow/tfjs-node';
+import multer from 'multer';
+import cors from 'cors';
+import path from 'path';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import { fileURLToPath } from 'url';
+import connectDB from './db.js';
+import Question from './quiz_questions_db.js';
+import User from './userModel.js';
+import mongoose from 'mongoose';
+import {Webhook} from 'svix';
+import bodyParser from 'body-parser';
+import { FaDiagramSuccessor } from 'react-icons/fa6';
+
+// Load environment variables
+dotenv.config();
+
+// Resolve __dirname for ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 
 const app = express();
@@ -137,6 +149,52 @@ app.get('/api/:collectionName', async (req, res) => {
 });
 
 
+// Webhook
+app.post(
+  "/api/webhooks",
+  bodyParser.raw({ type: 'application/json' }),
+  async function(req, res){
+    try{
+      const payloadString = req.body.toString();
+      const svixHeaders = req.headers;
+
+      const wh = new Webhook(process.env.CLERK_WEBHOOK_SECRET);
+      const evt = wh.verify(payloadString, svixHeaders);
+
+      const {id, ...attributes} = evt.data;
+
+      const eventType = evt.type;
+
+      if(eventType === 'user.created'){
+
+        const firstName = attributes.first_name;
+        const lastName = attributes.last_name;
+
+        console.log(firstName);
+
+        const User = new User({
+          clerkUserId: id,
+          firstName: firstName,
+          lastName: lastName
+        })
+
+        await user.save();
+        console.log('User is created')
+
+        // console.log('User ${id} is ${eventType}')
+        // console.log(attributes)
+      }
+
+      res.status(200).json({
+        success:true,
+        message: 'Webhook received'
+      })
+
+    }catch(err){
+
+    }
+  }
+)
 
 // Initialize server
 loadModel();

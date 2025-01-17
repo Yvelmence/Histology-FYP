@@ -68,7 +68,7 @@ function ChatBot() {
       const blob = await response.blob();
       formData.append('image', blob);
 
-      const res = await axios.post('http://localhost:5000/predict', formData, {
+      const res = await axios.post('http://localhost:3000/predict', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
 

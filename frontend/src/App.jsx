@@ -9,7 +9,6 @@ import Quiz from './pages/Quiz'
 import Home from './pages/Home'
 import QuizSelection from './components/Quiz/QuizSelection'
 
-
 function App() {
   return (
     <Router>
@@ -36,16 +35,11 @@ function App() {
               }
             />
 
-            <Route
-              path="/quiz/:collectionName"
-              element={
-                <Quiz />
-              }
-            />
+            <Route path="/quiz/:collectionName" element={<Quiz />} />
 
             {/* Auth routes */}
             <Route
-              path="/login"
+              path="/login/*"
               element={
                 <div
                   className="relative flex items-center justify-center min-h-screen bg-cover bg-center bg-no-repeat"
@@ -61,7 +55,7 @@ function App() {
               }
             />
             <Route
-              path="/signup"
+              path="/signup/*"
               element={
                 <div
                   className="relative flex items-center justify-center min-h-screen bg-cover bg-center bg-no-repeat"
@@ -76,6 +70,10 @@ function App() {
                 </div>
               }
             />
+            {/* Add catch-all route for Clerk's auth flows */}
+            <Route path="/signup/*" element={<SignUp routing="path" path="/signup" />} />
+            <Route path="/sso-callback" element={<SignUp routing="path" path="/signup" />} />
+            <Route path="/verify-email-address" element={<SignUp routing="path" path="/signup" />} />
           </Routes>
         </div>
       </div>
